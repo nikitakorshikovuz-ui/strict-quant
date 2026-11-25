@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strict Quant — Спортивный математик-аналитик и Live-сканер</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #020617; /* slate-950 */
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #020617;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Fallback Markdown output styles */
+    .md-output h1, .md-output h2, .md-output h3 {
+      font-weight: 700;
+      color: #f8fafc;
+      margin-top: 1.15rem;
+      margin-bottom: 0.45rem;
+    }
+    .md-output h2 { font-size: 1.05rem; border-bottom: 1px solid #1e293b; padding-bottom: 0.3rem; }
+    .md-output h3 { font-size: 0.95rem; color: #fbbf24; }
+    .md-output p { margin-bottom: 0.65rem; line-height: 1.6; color: #cbd5e1; font-size: 0.875rem; }
+    .md-output ul { margin-left: 1.2rem; margin-bottom: 0.7rem; list-style-type: disc; color: #cbd5e1; font-size: 0.875rem; }
+    .md-output li { margin-bottom: 0.3rem; }
+    .md-output table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.85rem 0;
+      font-size: 0.82rem;
+      background: #0f172a;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    .md-output th {
+      background: #1e293b;
+      color: #94a3b8;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #334155;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+    .md-output td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid #1e293b;
+      color: #e2e8f0;
+      vertical-align: top;
+    }
+    .md-output strong { color: #f8fafc; }
+    .md-output code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #1e293b;
+      padding: 0.1rem 0.35rem;
+      border-radius: 0.25rem;
+      font-size: 0.8em;
+      color: #22d3ee;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Top Terminal Header -->
+  <header class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <!-- Brand -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+            <i data-lucide="sigma" class="w-5 h-5 text-slate-950 stroke-[2.5]"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">STRICT QUANT</h1>
+              <span class="px-2 py-0.5 text-[10px] font-mono font-semibold uppercase rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Anti-Hallucination Terminal
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 hidden sm:block">Математик-аналитик • Прогнозы с мин. риском • Live-сканер перекосов</p>
+          </div>
+        </div>
+
+        <!-- Status Indicators & Clock -->
+        <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+          <div class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1.5">
+            <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span id="clock-time">--:--:--</span>
+          </div>
+          <button onclick="switchTab('settings')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center gap-1.5 transition" title="Статус Gemini AI">
+            <span id="dot-gemini" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="text-slate-300">Gemini</span>
+          </button>
+          <button onclick="switchTab('settings')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center gap-1.5 transition" title="Статус The Odds API">
+            <span id="dot-odds" class="w-2 h-2 rounded-full bg-slate-500"></span>
+            <span class="text-slate-300">Odds</span>
+            <span id="header-quota" class="text-amber-400 hidden md:inline"></span>
+          </button>
+          <button onclick="switchTab('settings')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 flex items-center gap-1.5 transition" title="Статус NHL / API-Sports">
+            <span id="dot-extra" class="w-2 h-2 rounded-full bg-slate-500"></span>
+            <span class="text-slate-300 hidden sm:inline">Live API</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar" id="main-tabs">
+        <button data-tab="analysis" onclick="switchTab('analysis')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition">
+          <i data-lucide="cpu" class="w-4 h-4"></i>
+          <span>Анализ матча</span>
+          <span id="session-count-badge" class="hidden px-1.5 py-0.5 text-[10px] font-mono rounded-md bg-slate-950/50 text-emerald-300">0</span>
+        </button>
+        <button data-tab="scanner" onclick="switchTab('scanner')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition">
+          <i data-lucide="radar" class="w-4 h-4"></i>
+          <span>Линия и Валуй-сканер</span>
+        </button>
+        <button data-tab="calculator" onclick="switchTab('calculator')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition">
+          <i data-lucide="calculator" class="w-4 h-4"></i>
+          <span>Калькулятор маржи, EV и Келли</span>
+        </button>
+        <button data-tab="aggregators" onclick="switchTab('aggregators')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition">
+          <i data-lucide="globe" class="w-4 h-4"></i>
+          <span>Агрегаторы и Эксперты</span>
+        </button>
+        <button data-tab="settings" onclick="switchTab('settings')" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition">
+          <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+          <span>Настройки API и Деплой</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5">
+
+    <!-- ========================================================= -->
+    <!-- TAB 1 (DEFAULT): АНАЛИЗ МАТЧА И ТАБЛИЦА ПРОГНОЗОВ         -->
+    <!-- ========================================================= -->
+    <section id="tab-analysis" class="tab-panel space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- Left Column: Match Input Form -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between gap-2 pb-3 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <i data-lucide="file-plus-2" class="w-4 h-4 text-emerald-400"></i>
+                <h2 class="text-sm font-bold uppercase tracking-wider text-white">Ввод матча для анализа</h2>
+              </div>
+              <button onclick="clearMatchForm()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <span>Сброс</span>
+              </button>
+            </div>
+
+            <!-- Quick Single-Line Match Input -->
+            <div>
+              <label class="block text-[11px] font-medium text-slate-400 mb-1">Быстрый ввод матча (разделитель «—», «-» или «vs»)</label>
+              <input id="in-match-quick" type="text" placeholder="Например: Эдмонтон Ойлерз — Вегас Голден Найтс" oninput="parseQuickMatchInput()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-emerald-400 focus:outline-none transition" />
+            </div>
+
+            <!-- Separate Team Inputs -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-medium text-slate-400 mb-1">Хозяева (Команда 1) *</label>
+                <input id="in-home" type="text" placeholder="Команда 1" oninput="syncQuickFromTeams()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600 focus:border-emerald-400 focus:outline-none transition" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-400 mb-1">Гости (Команда 2) *</label>
+                <input id="in-away" type="text" placeholder="Команда 2" oninput="syncQuickFromTeams()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600 focus:border-emerald-400 focus:outline-none transition" />
+              </div>
+            </div>
+
+            <!-- League & Status Toggle -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-medium text-slate-400 mb-1">Лига / Турнир</label>
+                <select id="in-league" onchange="toggleCustomLeague()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-emerald-400 focus:outline-none transition">
+                  <option value="NHL">🏒 NHL</option>
+                  <option value="AHL">🏒 AHL</option>
+                  <option value="NCAA">🏒 NCAA Hockey</option>
+                  <option value="Лига Чемпионов УЕФА">⚽ Лига Чемпионов</option>
+                  <option value="Лига Европы УЕФА">⚽ Лига Европы</option>
+                  <option value="КХЛ">🏒 КХЛ</option>
+                  <option value="АПЛ">⚽ АПЛ</option>
+                  <option value="NBA">🏀 NBA</option>
+                  <option value="Другая">Другая (указать)...</option>
+                </select>
+                <input id="in-league-custom" type="text" placeholder="Введите название лиги" class="hidden mt-2 w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-400 focus:outline-none" />
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-medium text-slate-400 mb-1">Статус матча</label>
+                <div class="grid grid-cols-2 bg-slate-950 p-1 rounded-xl border border-slate-700">
+                  <button type="button" id="btn-status-prematch" onclick="setMatchStatus('prematch')" class="py-1.5 rounded-lg text-xs font-semibold transition bg-emerald-500 text-slate-950">Прематч</button>
+                  <button type="button" id="btn-status-live" onclick="setMatchStatus('live')" class="py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white flex items-center justify-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Live
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live-Only Fields -->
+            <div id="live-fields-box" class="hidden bg-rose-950/20 border border-rose-500/30 rounded-xl p-3.5 space-y-3">
+              <div class="flex items-center gap-2 text-xs font-mono font-bold text-rose-400 uppercase">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span>Подтверждённые Live-данные с табло</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2.5">
+                <div>
+                  <label class="block text-[10px] text-slate-400 mb-1">Текущий счёт</label>
+                  <input id="in-live-score" type="text" placeholder="2 : 1" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-mono text-white focus:border-rose-400 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 mb-1">Период / Минута</label>
+                  <input id="in-live-clock" type="text" placeholder="2-й пер, 12:30" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white focus:border-rose-400 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-400 mb-1">Броски / Удары в створ</label>
+                  <input id="in-live-sog" type="text" placeholder="18 : 9" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm font-mono text-white focus:border-rose-400 focus:outline-none" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Optional Odds Row -->
+            <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-mono uppercase text-slate-400">Коэффициенты БК (опционально)</span>
+                <span id="in-odds-tag" class="text-[10px] font-mono text-amber-400">Ручной ввод</span>
+              </div>
+              <div class="grid grid-cols-4 gap-2">
+                <div>
+                  <label class="block text-[10px] text-slate-500 mb-1">П1</label>
+                  <input id="in-odd-1" type="number" step="0.01" placeholder="2.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs sm:text-sm font-mono text-white focus:border-amber-400 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-500 mb-1">Ничья (X)</label>
+                  <input id="in-odd-x" type="number" step="0.01" placeholder="4.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs sm:text-sm font-mono text-white focus:border-amber-400 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-500 mb-1">П2</label>
+                  <input id="in-odd-2" type="number" step="0.01" placeholder="2.95" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs sm:text-sm font-mono text-white focus:border-amber-400 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-[10px] text-slate-500 mb-1">Тотал</label>
+                  <input id="in-odd-total" type="text" placeholder="ТБ 5.5 (1.9)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs font-mono text-white focus:border-amber-400 focus:outline-none" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Extra Stats / Protocol Notes -->
+            <div>
+              <label class="block text-[11px] font-medium text-slate-400 mb-1">Дополнительная статистика, вратари, травмы или протокол</label>
+              <textarea id="in-notes" rows="3" placeholder="Вставьте любые подтверждённые факты: вратари, травмы, удаления, xG, угловые, заметки с DailyFaceoff / Flashscore..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-emerald-400 focus:outline-none transition"></textarea>
+            </div>
+
+            <!-- Google Search Grounding Checkbox (ON by default) -->
+            <label class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer hover:border-cyan-500/40 transition">
+              <input id="in-use-search" type="checkbox" checked class="w-4 h-4 mt-0.5 rounded accent-cyan-400" />
+              <div class="text-xs">
+                <div class="font-semibold text-cyan-400 flex items-center gap-1.5">
+                  <i data-lucide="search-check" class="w-3.5 h-3.5"></i>
+                  <span>Включить онлайн-поиск (Google Search Grounding)</span>
+                </div>
+                <div class="text-slate-400 text-[11px] mt-0.5 leading-snug">
+                  ИИ проверит реальные составы, вратарей, травмы и последние 5 матчей в поиске. При отсутствии данных на сегодня строго выведет «Нет подтверждённых онлайн-данных».
+                </div>
+              </div>
+            </label>
+
+            <!-- Primary CTA Button -->
+            <button onclick="analyzeMatchWithGemini()" id="btn-analyze" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Проанализировать матч и составить таблицу прогнозов</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Structured Analytical Output -->
+        <div class="lg:col-span-7 flex flex-col">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 flex-1 flex flex-col shadow-xl min-h-[560px]">
+            <!-- Panel Header -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3.5 border-b border-slate-800">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                  <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div>
+                  <h2 class="text-sm font-bold text-white" id="report-header-title">Математический отчёт</h2>
+                  <p class="text-[11px] font-mono text-slate-400">Strict Quant • Проверка вратарей, травм и 5 последних игр</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="copyCurrentReport()" id="btn-copy-report" class="hidden px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 flex items-center gap-1.5 transition border border-slate-700">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>Копировать</span>
+                </button>
+                <button onclick="switchTab('aggregators')" class="px-3 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-xs text-amber-400 flex items-center gap-1.5 transition border border-slate-800">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  <span>Агрегаторы</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Result Body -->
+            <div id="analysis-result-area" class="flex-1 py-4 space-y-4 overflow-y-auto">
+              <!-- Empty State -->
+              <div class="h-full flex flex-col items-center justify-center text-center py-14 px-4">
+                <div class="w-14 h-14 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center mb-4">
+                  <i data-lucide="bar-chart-2" class="w-7 h-7 text-slate-600"></i>
+                </div>
+                <h3 class="text-base font-semibold text-slate-200">Введите матч слева или выберите из сканера</h3>
+                <p class="text-xs sm:text-sm text-slate-400 max-w-md mt-1.5 leading-relaxed">
+                  После запуска ИИ-аналитик выдаст 4 структурированных блока: <strong class="text-emerald-400">Максимально вероятный исход</strong>, <strong class="text-cyan-400">Ставки с минимальным риском</strong>, <strong class="text-amber-400">Таблицу прогнозов</strong> и <strong class="text-slate-200">Чек-лист верификации</strong>.
+                </p>
+              </div>
+            </div>
+
+            <!-- Grounding Citations Box -->
+            <div id="grounding-sources-box" class="hidden pt-3 border-t border-slate-800 mt-2">
+              <div class="text-[11px] font-mono uppercase text-slate-400 mb-2 flex items-center gap-1.5">
+                <i data-lucide="link-2" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span>Источники онлайн-проверки (Google Search):</span>
+              </div>
+              <div id="grounding-sources-list" class="flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SESSION SUMMARY TABLE (СВОДНАЯ ТАБЛИЦА СЕССИИ) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="p-4 sm:p-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="table-2" class="w-5 h-5 text-amber-400"></i>
+            <div>
+              <h2 class="text-sm sm:text-base font-bold text-white">Сводная таблица сессии</h2>
+              <p class="text-xs text-slate-400">Все проанализированные матчи автоматически сохраняются здесь для сбора экспрессов и ординаров</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="copySessionTable()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-emerald-400 border border-slate-700 flex items-center gap-1.5 transition">
+              <i data-lucide="clipboard-copy" class="w-3.5 h-3.5"></i>
+              <span>Копировать таблицу</span>
+            </button>
+            <button onclick="clearSessionHistory()" class="px-3 py-1.5 rounded-lg bg-slate-950 hover:bg-rose-950/50 text-xs font-medium text-rose-400 border border-slate-800 hover:border-rose-500/40 flex items-center gap-1.5 transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Очистить</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950/90 border-b border-slate-800 text-[11px] font-mono uppercase tracking-wider text-slate-400">
+                <th class="py-3 px-4">Матч</th>
+                <th class="py-3 px-3">Лига / Статус</th>
+                <th class="py-3 px-4 text-emerald-400">Макс. вероятный исход</th>
+                <th class="py-3 px-4 text-cyan-400">Ставка с мин. риском</th>
+                <th class="py-3 px-3 text-center">Прогноз счёта</th>
+                <th class="py-3 px-4 text-right">Действия</th>
+              </tr>
+            </thead>
+            <tbody id="session-tbody" class="divide-y divide-slate-800/70 text-xs sm:text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 2: ЛИНИЯ И ВАЛУЙ-СКАНЕР (THE ODDS API)                -->
+    <!-- ========================================================= -->
+    <section id="tab-scanner" class="tab-panel hidden space-y-5">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 flex-1">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1.5">Лига / Турнир (The Odds API)</label>
+              <select id="sport-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400 transition">
+                <option value="icehockey_nhl">🏒 NHL (Хоккей)</option>
+                <option value="soccer_uefa_champs_league">⚽ Лига Чемпионов УЕФА</option>
+                <option value="soccer_uefa_europa_league">⚽ Лига Европы УЕФА</option>
+                <option value="soccer_epl">⚽ Английская Премьер-лига (АПЛ)</option>
+                <option value="basketball_nba">🏀 NBA (Баскетбол)</option>
+                <option value="icehockey_ahl">🏒 AHL</option>
+                <option value="icehockey_ncaa">🏒 NCAA Hockey</option>
+                <option value="basketball_ncaab">🏀 NCAA Basketball</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1.5">Поиск по команде</label>
+              <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3 top-3"></i>
+                <input id="scanner-search" type="text" placeholder="Oilers, Arsenal, Real..." oninput="renderScannerTable()" class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition" />
+              </div>
+            </div>
+            <div class="flex items-end">
+              <label class="flex items-center gap-2.5 bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 cursor-pointer hover:border-slate-600 transition w-full">
+                <input id="filter-value-only" type="checkbox" onchange="renderScannerTable()" class="w-4 h-4 rounded accent-emerald-400" />
+                <span class="text-sm text-slate-200 select-none">Только с Value &gt; 0%</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="fetchActiveSports()" id="btn-load-sports" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-medium flex items-center gap-2 transition border border-slate-700">
+              <i data-lucide="list-filter" class="w-4 h-4 text-cyan-400"></i>
+              <span>Активные лиги</span>
+            </button>
+            <button onclick="fetchOddsLine()" id="btn-fetch-odds" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-lg shadow-amber-500/20">
+              <i data-lucide="refresh-cw" class="w-4 h-4" id="icon-fetch-odds"></i>
+              <span>Загрузить линию (Онлайн)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metrics Strip -->
+        <div class="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="bg-slate-950 rounded-xl p-3 border border-slate-800">
+            <div class="text-slate-400">Загружено матчей</div>
+            <div id="stat-matches-count" class="text-lg font-mono font-bold text-white mt-0.5">0</div>
+          </div>
+          <div class="bg-slate-950 rounded-xl p-3 border border-slate-800">
+            <div class="text-slate-400">Value-перекосов (EV &gt; 0)</div>
+            <div id="stat-value-count" class="text-lg font-mono font-bold text-emerald-400 mt-0.5">0</div>
+          </div>
+          <div class="bg-slate-950 rounded-xl p-3 border border-slate-800">
+            <div class="text-slate-400">Эталон чистой линии</div>
+            <div class="text-sm font-mono font-semibold text-cyan-400 mt-1">Pinnacle / Avg</div>
+          </div>
+          <div class="bg-slate-950 rounded-xl p-3 border border-slate-800">
+            <div class="text-slate-400">Остаток Odds API</div>
+            <div id="stat-quota-remaining" class="text-lg font-mono font-bold text-amber-400 mt-0.5">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Box -->
+      <div id="scanner-status-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="radar" class="w-6 h-6 text-amber-400"></i>
+        </div>
+        <h3 class="text-base font-semibold text-white">Загрузка реальных линий букмекеров</h3>
+        <p class="text-sm text-slate-400 max-w-xl mx-auto mt-1">
+          Добавьте ваш ключ The Odds API во вкладке <button onclick="switchTab('settings')" class="text-amber-400 underline font-medium">«Настройки API и Деплой»</button> и нажмите «Загрузить линию (Онлайн)». Приложение рассчитает маржу, чистые вероятности и найдёт перекосы.
+        </p>
+      </div>
+
+      <!-- Table -->
+      <div id="scanner-table-wrapper" class="hidden bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-950 border-b border-slate-800 text-[11px] font-mono uppercase tracking-wider text-slate-400">
+                <th class="py-3.5 px-4">Время</th>
+                <th class="py-3.5 px-4">Матч</th>
+                <th class="py-3.5 px-3 text-center">Лучш. П1</th>
+                <th class="py-3.5 px-3 text-center">Лучш. Х</th>
+                <th class="py-3.5 px-3 text-center">Лучш. П2</th>
+                <th class="py-3.5 px-3 text-center">Тотал</th>
+                <th class="py-3.5 px-3 text-center">Маржа / Чистые %</th>
+                <th class="py-3.5 px-3 text-center">Макс. EV%</th>
+                <th class="py-3.5 px-4 text-right">Действие</th>
+              </tr>
+            </thead>
+            <tbody id="scanner-tbody" class="divide-y divide-slate-800/70 text-sm"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 3: КАЛЬКУЛЯТОР МАРЖИ, EV И КРИТЕРИЯ КЕЛЛИ              -->
+    <!-- ========================================================= -->
+    <section id="tab-calculator" class="tab-panel hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Margin & No-Vig -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <i data-lucide="percent" class="w-5 h-5 text-amber-400"></i>
+              <h2 class="text-base font-bold text-white">Маржа и чистая линия (No-Vig)</h2>
+            </div>
+            <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+              <button onclick="setCalcMode('3way')" id="calc-mode-3way" class="px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition">1X2 (3 исхода)</button>
+              <button onclick="setCalcMode('2way')" id="calc-mode-2way" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">П1/П2 (2 исхода)</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Кэф П1</label>
+              <input id="calc-o1" type="number" step="0.01" value="2.15" oninput="recalcMargin()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-mono text-white focus:border-amber-400 focus:outline-none" />
+            </div>
+            <div id="calc-draw-wrap">
+              <label class="block text-xs text-slate-400 mb-1">Кэф Х (Ничья)</label>
+              <input id="calc-ox" type="number" step="0.01" value="4.10" oninput="recalcMargin()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-mono text-white focus:border-amber-400 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Кэф П2</label>
+              <input id="calc-o2" type="number" step="0.01" value="2.85" oninput="recalcMargin()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-mono text-white focus:border-amber-400 focus:outline-none" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
+              <div class="text-xs text-slate-400">Маржа БК (Overround)</div>
+              <div id="res-margin" class="text-2xl font-mono font-bold text-amber-400 mt-1">—</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
+              <div class="text-xs text-slate-400">Сумма вероятностей</div>
+              <div id="res-implied-sum" class="text-2xl font-mono font-bold text-slate-200 mt-1">—</div>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto bg-slate-950 border border-slate-800 rounded-xl">
+            <table class="w-full text-xs font-mono">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 bg-slate-900/60">
+                  <th class="py-2.5 px-3 text-left">Исход</th>
+                  <th class="py-2.5 px-3 text-right">Кэф БК</th>
+                  <th class="py-2.5 px-3 text-right">С маржой</th>
+                  <th class="py-2.5 px-3 text-right text-emerald-400">Чистая %</th>
+                  <th class="py-2.5 px-3 text-right text-cyan-400">Справ. кэф</th>
+                </tr>
+              </thead>
+              <tbody id="res-novig-tbody" class="divide-y divide-slate-800/70"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- EV & Kelly -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+          <div class="flex items-center gap-2">
+            <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
+            <h2 class="text-base font-bold text-white">Калькулятор EV% и критерия Келли</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Банкролл</label>
+              <input id="kelly-bank" type="number" step="100" value="10000" oninput="recalcKelly()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-mono text-white focus:border-emerald-400 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Кэф ставки</label>
+              <input id="kelly-odd" type="number" step="0.01" value="2.35" oninput="recalcKelly()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-mono text-white focus:border-emerald-400 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Вероятность (%)</label>
+              <input id="kelly-prob" type="number" step="0.5" value="46.5" oninput="recalcKelly()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-mono text-white focus:border-emerald-400 focus:outline-none" />
+            </div>
+          </div>
+
+          <div id="kelly-ev-box" class="rounded-xl p-4 border flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">Мат. ожидание (EV%)</div>
+              <div id="res-ev-pct" class="text-3xl font-mono font-bold mt-1">—</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-slate-400">Безубыточность</div>
+              <div id="res-breakeven" class="text-lg font-mono font-semibold text-slate-200 mt-1">—</div>
+              <div id="res-ev-verdict" class="text-xs font-semibold mt-0.5">—</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-center">
+              <div class="text-[11px] text-slate-400">Полный Келли</div>
+              <div id="res-kelly-full-pct" class="text-lg font-mono font-bold text-white mt-1">—</div>
+              <div id="res-kelly-full-amt" class="text-xs font-mono text-amber-400 mt-0.5">—</div>
+            </div>
+            <div class="bg-slate-950 border border-emerald-500/30 rounded-xl p-3.5 text-center">
+              <div class="text-[11px] text-emerald-400 font-medium">1/2 Келли (Оптимум)</div>
+              <div id="res-kelly-half-pct" class="text-lg font-mono font-bold text-emerald-400 mt-1">—</div>
+              <div id="res-kelly-half-amt" class="text-xs font-mono text-emerald-300 mt-0.5">—</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-center">
+              <div class="text-[11px] text-slate-400">1/4 Келли (Сейф)</div>
+              <div id="res-kelly-quarter-pct" class="text-lg font-mono font-bold text-cyan-400 mt-1">—</div>
+              <div id="res-kelly-quarter-amt" class="text-xs font-mono text-cyan-300 mt-0.5">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 4: АГРЕГАТОРЫ И СПОРТИВНЫЕ ЭКСПЕРТЫ                   -->
+    <!-- ========================================================= -->
+    <section id="tab-aggregators" class="tab-panel hidden space-y-5">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="compass" class="w-5 h-5 text-cyan-400"></i>
+            <span>Центр верификации: Агрегаторы, xG и Эксперты</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Быстрый переход к первоисточникам. Название текущего матча из вкладки «Анализ матча» автоматически подставляется в поисковые ссылки.
+          </p>
+        </div>
+        <div class="px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono">
+          <span class="text-slate-400">Контекст: </span>
+          <span id="agg-context-label" class="text-emerald-400 font-semibold">Не выбран</span>
+        </div>
+      </div>
+
+      <div id="aggregators-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 5: НАСТРОЙКИ API И ДЕПЛОЙ (GITHUB / VERCEL SAFE)      -->
+    <!-- ========================================================= -->
+    <section id="tab-settings" class="tab-panel hidden space-y-5">
+      <!-- Security Banner for GitHub/Vercel -->
+      <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-2xl p-4 flex items-start gap-3">
+        <i data-lucide="lock" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+        <div class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
+          <strong class="text-emerald-400">Безопасно для публичного GitHub и Vercel:</strong> В коде этого файла <strong>нет зашитых API-ключей</strong>. Все ключи, которые вы вводите ниже, сохраняются исключительно локально в <code class="font-mono text-cyan-300">localStorage</code> вашего браузера и никогда не попадают в репозиторий.
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- 1. The Odds API -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span id="set-dot-odds" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+              <h3 class="text-sm font-bold text-white">1. The Odds API Key</h3>
+            </div>
+            <a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer" class="text-xs text-cyan-400 hover:underline flex items-center gap-1">
+              <span>Получить ключ</span><i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1.5">Ваш ключ (сохраняется только в этом браузере)</label>
+            <div class="flex gap-2">
+              <input id="set-odds-key" type="password" placeholder="Вставьте ключ The Odds API..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:border-amber-400 focus:outline-none" />
+              <button onclick="saveSettings()" class="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold transition">Сохранить</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono">
+            <div><span class="text-slate-400">Осталось: </span><span id="set-odds-remaining" class="text-amber-400 font-bold">—</span></div>
+            <div><span class="text-slate-400">Использовано: </span><span id="set-odds-used" class="text-slate-200">—</span></div>
+          </div>
+        </div>
+
+        <!-- 2. Gemini API -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <h3 class="text-sm font-bold text-white">2. Gemini API Key (для Vercel)</h3>
+            </div>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-xs text-cyan-400 hover:underline flex items-center gap-1">
+              <span>Google AI Studio</span><i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Внутри песочницы поле можно оставить пустым (работает встроенный ключ). После деплоя на <strong>Vercel</strong> вставьте ваш ключ Gemini API здесь — он сохранится в вашем браузере.
+          </p>
+          <div class="flex gap-2">
+            <input id="set-gemini-key" type="password" placeholder="Оставьте пустым в песочнице или вставьте для Vercel..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white focus:border-emerald-400 focus:outline-none" />
+            <button onclick="saveSettings()" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition">Сохранить</button>
+          </div>
+        </div>
+
+        <!-- 3. API-Sports Slot -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span id="set-dot-apisports" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+              <h3 class="text-sm font-bold text-white">3. API-Sports (Слот — добавим позже)</h3>
+            </div>
+            <span class="px-2 py-0.5 text-[10px] font-mono rounded bg-slate-800 text-slate-400">Football / Hockey</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Хост</label>
+              <select id="set-apisports-host" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:border-cyan-400 focus:outline-none">
+                <option value="v1.hockey.api-sports.io">v1.hockey.api-sports.io</option>
+                <option value="v3.football.api-sports.io">v3.football.api-sports.io</option>
+                <option value="api-football-v1.p.rapidapi.com">RapidAPI (Football)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">API-Sports Key</label>
+              <input id="set-apisports-key" type="password" placeholder="Ключ API-Sports..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white focus:border-cyan-400 focus:outline-none" />
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="saveSettings()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium border border-slate-700 transition">Сохранить</button>
+            <button onclick="testApiSportsConnection()" class="px-3.5 py-2 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 text-xs font-medium border border-cyan-500/30 transition flex items-center gap-1.5">
+              <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+              <span>Проверить</span>
+            </button>
+          </div>
+          <div id="apisports-test-result" class="text-xs font-mono text-slate-400 hidden bg-slate-950 p-2.5 rounded-xl border border-slate-800"></div>
+        </div>
+
+        <!-- 4. NHL Official API Slot -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span id="set-dot-nhl" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+              <h3 class="text-sm font-bold text-white">4. NHL Official API (Live SOG &amp; Счёт)</h3>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400">api-web.nhle.com</span>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">CORS-прокси (префикс URL)</label>
+            <div class="flex gap-2">
+              <input id="set-nhl-proxy" type="text" placeholder="https://corsproxy.io/?" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white focus:border-cyan-400 focus:outline-none" />
+              <button onclick="fetchNhlViaProxy()" class="px-3.5 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-bold transition whitespace-nowrap">Загрузить NHL</button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Или вставьте сырой JSON из api-web.nhle.com/v1/score/now</label>
+            <textarea id="nhl-raw-json" rows="2" placeholder='{"games": [...]}' class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:border-cyan-400 focus:outline-none"></textarea>
+            <button onclick="parseNhlRawJson()" class="mt-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-amber-400 font-medium border border-slate-700 transition">Разобрать JSON</button>
+          </div>
+          <div id="nhl-parsed-list" class="space-y-2 hidden max-h-48 overflow-y-auto"></div>
+        </div>
+      </div>
+
+      <!-- Danger Zone: Clear Keys & Session -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="text-sm font-bold text-white">Управление локальными данными</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Полная очистка сохранённых ключей API и сводной таблицы сессии из браузера.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="clearAllKeys()" class="px-3.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 text-rose-300 border border-rose-500/30 text-xs font-semibold transition">
+            Очистить все API-ключи
+          </button>
+          <button onclick="clearSessionHistory()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition">
+            Очистить историю сессии
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-slate-800/80 py-3 px-4 text-center text-[11px] text-slate-500 font-mono">
+    STRICT QUANT TERMINAL • Детерминированная математика • Готово к деплою на GitHub &amp; Vercel
+  </footer>
+
+  <script>
+    // =========================================================================
+    // STATE & LOCAL STORAGE KEYS (NO HARDCODED SECRETS FOR SAFE GITHUB DEPLOY)
+    // =========================================================================
+    const SETTINGS_STORAGE_KEY = 'strict_quant_settings_v2';
+    const SESSION_STORAGE_KEY = 'strict_quant_session_v2';
+
+    let state = {
+      settings: {
+        oddsKey: '',
+        geminiKey: '',
+        apiSportsKey: '',
+        apiSportsHost: 'v1.hockey.api-sports.io',
+        nhlProxy: 'https://corsproxy.io/?'
+      },
+      quota: { remaining: null, used: null },
+      matchStatus: 'prematch', // 'prematch' | 'live'
+      scannerMatches: [],
+      sessionHistory: [],
+      currentReportText: '',
+      calcMode: '3way'
+    };
+
+    // =========================================================================
+    // INIT
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSettings();
+      loadSessionHistory();
+      initClock();
+      switchTab('analysis');
+      recalcMargin();
+      recalcKelly();
+      renderAggregators();
+      renderSessionTable();
+      updateStatusDots();
+      lucide.createIcons();
+    });
+
+    function initClock() {
+      const tick = () => {
+        document.getElementById('clock-time').textContent = new Date().toLocaleTimeString('ru-RU', {
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+      };
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // =========================================================================
+    // TOASTS (NO alert / confirm)
+    // =========================================================================
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const styles = {
+        success: 'bg-emerald-950/95 border-emerald-500/50 text-emerald-200',
+        error: 'bg-rose-950/95 border-rose-500/50 text-rose-200',
+        warning: 'bg-amber-950/95 border-amber-500/50 text-amber-200',
+        info: 'bg-slate-900/95 border-cyan-500/50 text-slate-200'
+      };
+      const icons = {
+        success: 'check-circle-2',
+        error: 'alert-octagon',
+        warning: 'alert-triangle',
+        info: 'info'
+      };
+      const el = document.createElement('div');
+      el.className = `pointer-events-auto flex items-start gap-2.5 p-3.5 rounded-xl border shadow-2xl text-xs sm:text-sm backdrop-blur-md transition-all duration-300 ${styles[type] || styles.info}`;
+      el.innerHTML = `<i data-lucide="${icons[type] || 'info'}" class="w-4 h-4 shrink-0 mt-0.5"></i><div class="flex-1 leading-snug">${escapeHtml(message)}</div>`;
+      container.appendChild(el);
+      lucide.createIcons();
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        setTimeout(() => el.remove(), 300);
+      }, 4200);
+    }
+
+    // =========================================================================
+    // NAVIGATION
+    // =========================================================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+      const panel = document.getElementById(`tab-${tabId}`);
+      if (panel) panel.classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        const active = btn.dataset.tab === tabId;
+        btn.className = active
+          ? 'tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition bg-emerald-400 text-slate-950 shadow-md shadow-emerald-500/20'
+          : 'tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 transition text-slate-400 hover:text-white hover:bg-slate-800/70';
+      });
+
+      if (tabId === 'aggregators') renderAggregators();
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // SETTINGS & STORAGE
+    // =========================================================================
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (raw) {
+          state.settings = { ...state.settings, ...JSON.parse(raw) };
+        }
+      } catch (e) {}
+
+      document.getElementById('set-odds-key').value = state.settings.oddsKey || '';
+      document.getElementById('set-gemini-key').value = state.settings.geminiKey || '';
+      document.getElementById('set-apisports-key').value = state.settings.apiSportsKey || '';
+      document.getElementById('set-apisports-host').value = state.settings.apiSportsHost || 'v1.hockey.api-sports.io';
+      document.getElementById('set-nhl-proxy').value = state.settings.nhlProxy || 'https://corsproxy.io/?';
+    }
+
+    function saveSettings() {
+      state.settings.oddsKey = document.getElementById('set-odds-key').value.trim();
+      state.settings.geminiKey = document.getElementById('set-gemini-key').value.trim();
+      state.settings.apiSportsKey = document.getElementById('set-apisports-key').value.trim();
+      state.settings.apiSportsHost = document.getElementById('set-apisports-host').value;
+      state.settings.nhlProxy = document.getElementById('set-nhl-proxy').value.trim();
+      try {
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(state.settings));
+      } catch (e) {}
+      updateStatusDots();
+      showToast('Настройки API сохранены локально в браузере.', 'success');
+    }
+
+    function clearAllKeys() {
+      state.settings = {
+        oddsKey: '',
+        geminiKey: '',
+        apiSportsKey: '',
+        apiSportsHost: 'v1.hockey.api-sports.io',
+        nhlProxy: 'https://corsproxy.io/?'
+      };
+      try { localStorage.removeItem(SETTINGS_STORAGE_KEY); } catch (e) {}
+      loadSettings();
+      updateStatusDots();
+      showToast('Все сохранённые API-ключи удалены из браузера.', 'warning');
+    }
+
+    function updateStatusDots() {
+      const oddsOk = Boolean(state.settings.oddsKey);
+      document.getElementById('dot-odds').className = `w-2 h-2 rounded-full ${oddsOk ? 'bg-emerald-400' : 'bg-slate-500'}`;
+      document.getElementById('set-dot-odds').className = `w-2.5 h-2.5 rounded-full ${oddsOk ? 'bg-emerald-400' : 'bg-slate-500'}`;
+
+      const apiOk = Boolean(state.settings.apiSportsKey);
+      document.getElementById('set-dot-apisports').className = `w-2.5 h-2.5 rounded-full ${apiOk ? 'bg-emerald-400' : 'bg-slate-500'}`;
+
+      const nhlOk = Boolean(state.settings.nhlProxy);
+      document.getElementById('set-dot-nhl').className = `w-2.5 h-2.5 rounded-full ${nhlOk ? 'bg-amber-400' : 'bg-slate-500'}`;
+      document.getElementById('dot-extra').className = `w-2 h-2 rounded-full ${(apiOk || nhlOk) ? 'bg-cyan-400' : 'bg-slate-500'}`;
+    }
+
+    function updateQuotaUI(remaining, used) {
+      if (remaining !== null) {
+        state.quota.remaining = remaining;
+        document.getElementById('stat-quota-remaining').textContent = remaining;
+        document.getElementById('set-odds-remaining').textContent = remaining;
+        document.getElementById('header-quota').textContent = `(${remaining})`;
+      }
+      if (used !== null) {
+        state.quota.used = used;
+        document.getElementById('set-odds-used').textContent = used;
+      }
+    }
+
+    // =========================================================================
+    // TAB 1: MATCH INPUT FORM HELPERS
+    // =========================================================================
+    function parseQuickMatchInput() {
+      const raw = document.getElementById('in-match-quick').value;
+      const parts = raw.split(/\s*(?:—|–|-|\bvs\.?\b)\s*/i);
+      if (parts.length >= 2) {
+        document.getElementById('in-home').value = parts[0].trim();
+        document.getElementById('in-away').value = parts.slice(1).join(' - ').trim();
+      }
+      syncAggregatorsContext();
+    }
+
+    function syncQuickFromTeams() {
+      const h = document.getElementById('in-home').value.trim();
+      const a = document.getElementById('in-away').value.trim();
+      document.getElementById('in-match-quick').value = (h && a) ? `${h} — ${a}` : (h || a);
+      syncAggregatorsContext();
+    }
+
+    function toggleCustomLeague() {
+      const val = document.getElementById('in-league').value;
+      const custom = document.getElementById('in-league-custom');
+      if (val === 'Другая') {
+        custom.classList.remove('hidden');
+        custom.focus();
+      } else {
+        custom.classList.add('hidden');
+      }
+    }
+
+    function getSelectedLeague() {
+      const val = document.getElementById('in-league').value;
+      if (val === 'Другая') {
+        return document.getElementById('in-league-custom').value.trim() || 'Другая лига';
+      }
+      return val;
+    }
+
+    function setMatchStatus(status) {
+      state.matchStatus = status;
+      const btnPre = document.getElementById('btn-status-prematch');
+      const btnLive = document.getElementById('btn-status-live');
+      const liveBox = document.getElementById('live-fields-box');
+
+      if (status === 'live') {
+        btnLive.className = 'py-1.5 rounded-lg text-xs font-bold transition bg-rose-500 text-white flex items-center justify-center gap-1';
+        btnPre.className = 'py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white';
+        liveBox.classList.remove('hidden');
+      } else {
+        btnPre.className = 'py-1.5 rounded-lg text-xs font-bold transition bg-emerald-500 text-slate-950';
+        btnLive.className = 'py-1.5 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white flex items-center justify-center gap-1';
+        liveBox.classList.add('hidden');
+      }
+    }
+
+    function clearMatchForm() {
+      ['in-match-quick', 'in-home', 'in-away', 'in-league-custom', 'in-live-score', 'in-live-clock', 'in-live-sog', 'in-odd-1', 'in-odd-x', 'in-odd-2', 'in-odd-total', 'in-notes'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('in-odds-tag').textContent = 'Ручной ввод';
+      setMatchStatus('prematch');
+      syncAggregatorsContext();
+      showToast('Форма матча очищена.', 'info');
+    }
+
+    // =========================================================================
+    // TAB 1: GEMINI AI STRICT ANALYSIS & STRUCTURED RENDERER
+    // =========================================================================
+    async function fetchWithBackoff(url, options, maxRetries = 3) {
+      let delay = 1000;
+      for (let i = 0; i <= maxRetries; i++) {
+        const res = await fetch(url, options);
+        if (res.ok || (res.status !== 429 && res.status < 500)) return res;
+        if (i < maxRetries) {
+          await new Promise(r => setTimeout(r, delay));
+          delay *= 2;
+        } else {
+          return res;
+        }
+      }
+    }
+
+    async function analyzeMatchWithGemini() {
+      const home = document.getElementById('in-home').value.trim();
+      const away = document.getElementById('in-away').value.trim();
+      if (!home || !away) {
+        showToast('Укажите обе команды (Хозяева и Гости).', 'warning');
+        return;
+      }
+
+      const league = getSelectedLeague();
+      const isLive = state.matchStatus === 'live';
+      const liveScore = document.getElementById('in-live-score').value.trim();
+      const liveClock = document.getElementById('in-live-clock').value.trim();
+      const liveSog = document.getElementById('in-live-sog').value.trim();
+      const o1 = document.getElementById('in-odd-1').value.trim();
+      const ox = document.getElementById('in-odd-x').value.trim();
+      const o2 = document.getElementById('in-odd-2').value.trim();
+      const oTot = document.getElementById('in-odd-total').value.trim();
+      const notes = document.getElementById('in-notes').value.trim();
+      const useSearch = document.getElementById('in-use-search').checked;
+
+      const nowStr = new Date().toLocaleString('ru-RU', { dateStyle: 'full', timeStyle: 'short' });
+
+      const systemPrompt = `Работай строго как математик-аналитик. Запрещено придумывать счёт, авторов голов, минуты и статистику. Если онлайн-поиск не возвращает данные с чёткой привязкой к сегодняшней дате и текущему времени, пиши строго: «Нет подтверждённых онлайн-данных». Все расчёты в лайве строй только на подтверждённых фактах из протоколов или введённых пользователем данных. Перед любым прогнозом обязательно проверяй стартовых вратарей/составы, травмы ключевых игроков и последние 5 матчей.
+
+ОБЯЗАТЕЛЬНЫЙ ФОРМАТ ОТВЕТА:
+Верни ответ СТРОГО в виде валидного JSON-объекта внутри блока \`\`\`json ... \`\`\` на русском языке следующей структуры:
+{
+  "mostProbable": {
+    "outcome": "Конкретный максимально вероятный исход (например: Победа Эдмонтона в матче или Обе забьют)",
+    "predictedScore": "Ориентировочный счёт (например: 3 : 2)",
+    "probabilityPct": "Оценка вероятности в % (например: 64%)",
+    "reasoning": "Краткое математическое обоснование строго на фактах"
+  },
+  "lowRiskBets": [
+    {
+      "market": "Название рынка (например: Двойной шанс / Фора / Безопасный тотал)",
+      "pick": "Конкретная ставка (например: 1X, Фора 1 (+1.5), ТБ 4.5)",
+      "riskLevel": "Минимальный или Низкий",
+      "reasoning": "Почему этот вариант максимально безопасен математически"
+    }
+  ],
+  "predictionsTable": [
+    {
+      "market": "Рынок / Событие",
+      "prediction": "Прогноз",
+      "probability": "Вероятность %",
+      "riskLevel": "Низкий / Средний / Высокий",
+      "reasoning": "Фактическое обоснование"
+    }
+  ],
+  "verificationChecklist": {
+    "goaliesAndLineups": "Подтверждённые вратари/составы или строго «Нет подтверждённых онлайн-данных»",
+    "injuries": "Подтверждённые травмы или строго «Нет подтверждённых онлайн-данных»",
+    "last5Matches": "Форма последних 5 матчей обеих команд или строго «Нет подтверждённых онлайн-данных»",
+    "expertsAndSources": "Сводка мнений экспертов/агрегаторов или строго «Нет подтверждённых онлайн-данных»"
+  }
+}
+В массиве lowRiskBets верни 2–3 самых надёжных варианта. В predictionsTable верни 4–6 ключевых рынков (Основной исход, Двойной шанс/Фора, Тотал, Индивидуальный тотал, Доп. событие).`;
+
+      const userQuery = `Текущие дата и время: ${nowStr}
+Матч: ${home} — ${away}
+Лига: ${league}
+Статус: ${isLive ? `LIVE (Счёт: ${liveScore || 'не указан'}, Время: ${liveClock || 'не указано'}, Броски/Удары в створ: ${liveSog || 'не указаны'})` : 'Прематч'}
+Коэффициенты БК: П1 = ${o1 || 'нет'}, X = ${ox || 'нет'}, П2 = ${o2 || 'нет'}, Тотал = ${oTot || 'нет'}
+Дополнительные факты / протокол от пользователя: ${notes || 'не предоставлены'}
+
+Проведи глубокий математический анализ${useSearch ? ', обязательно проверь в онлайн-поиске стартовых вратарей/составы, травмы, последние 5 матчей и консенсус экспертов на сегодняшнюю дату,' : ' строго по переданным данным'} и верни JSON строго по шаблону.`;
+
+      const area = document.getElementById('analysis-result-area');
+      const sourcesBox = document.getElementById('grounding-sources-box');
+      const copyBtn = document.getElementById('btn-copy-report');
+      const btn = document.getElementById('btn-analyze');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+      sourcesBox.classList.add('hidden');
+      copyBtn.classList.add('hidden');
+      document.getElementById('report-header-title').textContent = `${home} — ${away}`;
+
+      area.innerHTML = `
+        <div class="h-full flex flex-col items-center justify-center py-16 text-center">
+          <div class="w-10 h-10 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <div class="text-sm font-semibold text-white">Выполняется строгий анализ: ${escapeHtml(home)} — ${escapeHtml(away)}</div>
+          <div class="text-xs font-mono text-slate-400 mt-1">${useSearch ? 'Онлайн-проверка вратарей, травм и последних 5 матчей (Google Search)...' : 'Расчёт по переданным фактам без онлайн-поиска...'}</div>
+        </div>
+      `;
+
+      try {
+        const apiKey = state.settings.geminiKey || '';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userQuery }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { temperature: 0.1 }
+        };
+
+        if (useSearch) {
+          payload.tools = [{ google_search: {} }];
+        }
+
+        const res = await fetchWithBackoff(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data?.error?.message || `HTTP ${res.status}`);
+        }
+
+        const candidate = data.candidates?.[0];
+        const rawText = candidate?.content?.parts?.map(p => p.text || '').join('\n').trim();
+        if (!rawText) throw new Error('Модель вернула пустой ответ.');
+
+        // Extract grounding citations
+        const sources = extractGroundingSources(candidate);
+
+        // Parse structured JSON with fallback
+        const parsed = tryParseAnalysisJson(rawText);
+
+        if (parsed) {
+          renderStructuredAnalysis(parsed, sources);
+          state.currentReportText = buildPlainTextReport(home, away, league, isLive ? `Live (${liveScore || '?'})` : 'Прематч', parsed);
+
+          // Save to Session Summary Table
+          addToSessionHistory({
+            id: Date.now().toString(),
+            match: `${home} — ${away}`,
+            home,
+            away,
+            league,
+            statusLabel: isLive ? `LIVE ${liveScore || ''}`.trim() : 'Прематч',
+            mostProbableOutcome: parsed.mostProbable?.outcome || '—',
+            mostProbablePct: parsed.mostProbable?.probabilityPct || '',
+            predictedScore: parsed.mostProbable?.predictedScore || '—',
+            lowRiskPick: parsed.lowRiskBets?.[0] ? `${parsed.lowRiskBets[0].pick} (${parsed.lowRiskBets[0].market})` : '—',
+            fullData: parsed,
+            sources,
+            timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+          });
+        } else {
+          // Graceful fallback to safe Markdown renderer
+          state.currentReportText = rawText;
+          area.innerHTML = `<div class="md-output">${renderSafeMarkdown(rawText)}</div>`;
+          renderSourcesBox(sources);
+        }
+
+        copyBtn.classList.remove('hidden');
+        showToast('Анализ завершён и добавлен в сводную таблицу сессии.', 'success');
+      } catch (err) {
+        area.innerHTML = `
+          <div class="p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-200 text-sm">
+            <div class="font-bold flex items-center gap-2 mb-1.5">
+              <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-400"></i>
+              <span>Ошибка запроса к Gemini AI</span>
+            </div>
+            <p class="text-xs font-mono text-rose-300">${escapeHtml(err.message)}</p>
+            <p class="text-xs text-slate-400 mt-2">Если вы открыли сайт на Vercel, убедитесь, что вставили ваш Gemini API Key во вкладке «Настройки API и Деплой».</p>
+          </div>
+        `;
+        lucide.createIcons();
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }
+    }
+
+    function tryParseAnalysisJson(text) {
+      try {
+        const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+        const candidateStr = fenced ? fenced[1].trim() : text.trim();
+        const start = candidateStr.indexOf('{');
+        const end = candidateStr.lastIndexOf('}');
+        if (start === -1 || end === -1) return null;
+        const obj = JSON.parse(candidateStr.slice(start, end + 1));
+        if (obj && (obj.mostProbable || obj.predictionsTable)) return obj;
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function extractGroundingSources(candidate) {
+      const list = [];
+      const attrs = candidate?.groundingMetadata?.groundingAttributions || [];
+      const chunks = candidate?.groundingMetadata?.groundingChunks || [];
+      attrs.forEach(a => { if (a.web?.uri && a.web?.title) list.push({ uri: a.web.uri, title: a.web.title }); });
+      chunks.forEach(c => { if (c.web?.uri && c.web?.title) list.push({ uri: c.web.uri, title: c.web.title }); });
+      return Array.from(new Map(list.map(s => [s.uri, s])).values());
+    }
+
+    function highlightNoData(text) {
+      const safe = escapeHtml(text || 'Нет подтверждённых онлайн-данных');
+      return safe.replace(/Нет подтверждённых онлайн-данных/gi, '<span class="inline-block px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30 font-mono text-[11px]">Нет подтверждённых онлайн-данных</span>');
+    }
+
+    function riskBadgeHtml(risk) {
+      const r = String(risk || '').toLowerCase();
+      if (r.includes('мин') || r.includes('низк')) {
+        return `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">${escapeHtml(risk)}</span>`;
+      }
+      if (r.includes('высок')) {
+        return `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">${escapeHtml(risk)}</span>`;
+      }
+      return `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">${escapeHtml(risk || 'Средний')}</span>`;
+    }
+
+    function renderStructuredAnalysis(data, sources = []) {
+      const area = document.getElementById('analysis-result-area');
+      const mp = data.mostProbable || {};
+      const lowRisk = Array.isArray(data.lowRiskBets) ? data.lowRiskBets : [];
+      const tableRows = Array.isArray(data.predictionsTable) ? data.predictionsTable : [];
+      const chk = data.verificationChecklist || {};
+
+      area.innerHTML = `
+        <!-- BLOCK 1: MOST PROBABLE OUTCOME (EMERALD) -->
+        <div class="rounded-2xl bg-emerald-950/35 border border-emerald-500/40 p-4 sm:p-5 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+              <i data-lucide="target" class="w-4 h-4"></i>
+              <span>1. Максимально вероятный исход</span>
+            </div>
+            <div class="flex items-center gap-2 font-mono">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">
+                Вероятность: ${escapeHtml(mp.probabilityPct || '—')}
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-950 text-amber-400 border border-slate-700 text-xs font-bold">
+                Счёт: ${escapeHtml(mp.predictedScore || '—')}
+              </span>
+            </div>
+          </div>
+          <div class="text-base sm:text-lg font-bold text-white">${escapeHtml(mp.outcome || '—')}</div>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${highlightNoData(mp.reasoning)}</p>
+        </div>
+
+        <!-- BLOCK 2: LOW-RISK BETS (CYAN) -->
+        <div class="rounded-2xl bg-cyan-950/30 border border-cyan-500/40 p-4 sm:p-5 space-y-3">
+          <div class="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            <span>2. Ставки с минимальным риском</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            ${lowRisk.length ? lowRisk.map(b => `
+              <div class="bg-slate-950/80 border border-cyan-500/25 rounded-xl p-3.5 space-y-1.5">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-mono text-slate-400">${escapeHtml(b.market)}</span>
+                  ${riskBadgeHtml(b.riskLevel || 'Минимальный')}
+                </div>
+                <div class="text-sm font-bold text-cyan-300 font-mono">${escapeHtml(b.pick)}</div>
+                <p class="text-xs text-slate-300 leading-snug">${highlightNoData(b.reasoning)}</p>
+              </div>
+            `).join('') : '<div class="text-xs text-slate-400">Нет выделенных безопасных вариантов.</div>'}
+          </div>
+        </div>
+
+        <!-- BLOCK 3: PREDICTIONS TABLE -->
+        <div class="rounded-2xl bg-slate-950/80 border border-slate-800 overflow-hidden">
+          <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-amber-400">
+            <i data-lucide="table" class="w-4 h-4"></i>
+            <span>3. Таблица прогнозов по матчу</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-900/50 border-b border-slate-800 text-[10px] font-mono uppercase text-slate-400">
+                  <th class="py-2.5 px-3">Рынок / Событие</th>
+                  <th class="py-2.5 px-3">Прогноз</th>
+                  <th class="py-2.5 px-3 text-center">Вероятн.</th>
+                  <th class="py-2.5 px-3 text-center">Риск</th>
+                  <th class="py-2.5 px-3">Фактическое обоснование</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/70">
+                ${tableRows.map(r => `
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-2.5 px-3 font-medium text-slate-300">${escapeHtml(r.market)}</td>
+                    <td class="py-2.5 px-3 font-mono font-bold text-white">${escapeHtml(r.prediction)}</td>
+                    <td class="py-2.5 px-3 text-center font-mono text-emerald-400 font-semibold">${escapeHtml(r.probability)}</td>
+                    <td class="py-2.5 px-3 text-center whitespace-nowrap">${riskBadgeHtml(r.riskLevel)}</td>
+                    <td class="py-2.5 px-3 text-slate-300 leading-snug">${highlightNoData(r.reasoning)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BLOCK 4: VERIFICATION CHECKLIST -->
+        <div class="rounded-2xl bg-slate-950/80 border border-slate-800 p-4 space-y-2.5">
+          <div class="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-slate-300 pb-2 border-b border-slate-800">
+            <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-400"></i>
+            <span>4. Чек-лист верификации фактов</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3">
+              <div class="text-[11px] font-semibold text-cyan-400 mb-1">Стартовые вратари / составы</div>
+              <div class="text-slate-300 leading-relaxed">${highlightNoData(chk.goaliesAndLineups)}</div>
+            </div>
+            <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3">
+              <div class="text-[11px] font-semibold text-rose-400 mb-1">Травмы ключевых игроков</div>
+              <div class="text-slate-300 leading-relaxed">${highlightNoData(chk.injuries)}</div>
+            </div>
+            <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3">
+              <div class="text-[11px] font-semibold text-amber-400 mb-1">Форма последних 5 матчей</div>
+              <div class="text-slate-300 leading-relaxed">${highlightNoData(chk.last5Matches)}</div>
+            </div>
+            <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3">
+              <div class="text-[11px] font-semibold text-emerald-400 mb-1">Мнения экспертов / источники</div>
+              <div class="text-slate-300 leading-relaxed">${highlightNoData(chk.expertsAndSources)}</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      renderSourcesBox(sources);
+      lucide.createIcons();
+    }
+
+    function renderSourcesBox(sources) {
+      const box = document.getElementById('grounding-sources-box');
+      const list = document.getElementById('grounding-sources-list');
+      if (sources && sources.length > 0) {
+        list.innerHTML = sources.map(s => `
+          <a href="${escapeHtml(s.uri)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-700 text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition">
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+            <span class="truncate max-w-[200px]">${escapeHtml(s.title)}</span>
+          </a>
+        `).join('');
+        box.classList.remove('hidden');
+      } else {
+        box.classList.add('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function buildPlainTextReport(home, away, league, status, d) {
+      let txt = `STRICT QUANT — ОТЧЁТ ПО МАТЧУ\n${home} — ${away} (${league}, ${status})\n\n`;
+      txt += `1. МАКСИМАЛЬНО ВЕРОЯТНЫЙ ИСХОД: ${d.mostProbable?.outcome} (Счёт: ${d.mostProbable?.predictedScore}, Вероятность: ${d.mostProbable?.probabilityPct})\n${d.mostProbable?.reasoning}\n\n`;
+      txt += `2. СТАВКИ С МИНИМАЛЬНЫМ РИСКОМ:\n`;
+      (d.lowRiskBets || []).forEach(b => { txt += `- ${b.pick} [${b.market}, риск: ${b.riskLevel}]: ${b.reasoning}\n`; });
+      txt += `\n3. ТАБЛИЦА ПРОГНОЗОВ:\n`;
+      (d.predictionsTable || []).forEach(r => { txt += `| ${r.market} | ${r.prediction} | ${r.probability} | ${r.riskLevel} | ${r.reasoning} |\n`; });
+      return txt;
+    }
+
+    function copyTextToClipboard(text, successMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg, 'success');
+      } catch (e) {
+        showToast('Не удалось скопировать в буфер обмена.', 'error');
+      }
+      document.body.removeChild(ta);
+    }
+
+    function copyCurrentReport() {
+      if (state.currentReportText) {
+        copyTextToClipboard(state.currentReportText, 'Отчёт по матчу скопирован.');
+      }
+    }
+
+    // =========================================================================
+    // SESSION SUMMARY TABLE (СВОДНАЯ ТАБЛИЦА СЕССИИ)
+    // =========================================================================
+    function loadSessionHistory() {
+      try {
+        const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+        if (raw) state.sessionHistory = JSON.parse(raw);
+      } catch (e) {
+        state.sessionHistory = [];
+      }
+    }
+
+    function saveSessionHistory() {
+      try {
+        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state.sessionHistory));
+      } catch (e) {}
+    }
+
+    function addToSessionHistory(entry) {
+      // Update existing entry if same match, else prepend
+      const idx = state.sessionHistory.findIndex(x => x.match.toLowerCase() === entry.match.toLowerCase());
+      if (idx !== -1) {
+        state.sessionHistory.splice(idx, 1);
+      }
+      state.sessionHistory.unshift(entry);
+      saveSessionHistory();
+      renderSessionTable();
+    }
+
+    function renderSessionTable() {
+      const tbody = document.getElementById('session-tbody');
+      const badge = document.getElementById('session-count-badge');
+
+      if (state.sessionHistory.length > 0) {
+        badge.textContent = state.sessionHistory.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+
+      if (state.sessionHistory.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-8 text-center text-slate-500 text-xs sm:text-sm">
+              Сводная таблица сессии пока пуста. Проанализируйте первый матч выше — он появится здесь автоматически.
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = state.sessionHistory.map(item => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="py-3 px-4">
+            <div class="font-semibold text-white">${escapeHtml(item.match)}</div>
+            <div class="text-[10px] font-mono text-slate-500">Обновлено в ${escapeHtml(item.timestamp)}</div>
+          </td>
+          <td class="py-3 px-3 whitespace-nowrap">
+            <div class="text-xs text-slate-300">${escapeHtml(item.league)}</div>
+            <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono ${item.statusLabel.startsWith('LIVE') ? 'bg-rose-500/15 text-rose-400' : 'bg-slate-800 text-slate-400'}">${escapeHtml(item.statusLabel)}</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="font-semibold text-emerald-400">${escapeHtml(item.mostProbableOutcome)}</div>
+            ${item.mostProbablePct ? `<div class="text-[11px] font-mono text-slate-400">Вероятность: ${escapeHtml(item.mostProbablePct)}</div>` : ''}
+          </td>
+          <td class="py-3 px-4 font-mono text-cyan-300 text-xs">${escapeHtml(item.lowRiskPick)}</td>
+          <td class="py-3 px-3 text-center font-mono font-bold text-amber-400 whitespace-nowrap">${escapeHtml(item.predictedScore)}</td>
+          <td class="py-3 px-4 text-right whitespace-nowrap">
+            <div class="inline-flex items-center gap-1.5">
+              <button onclick="openSessionItem('${escapeHtml(item.id)}')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-emerald-500 text-slate-200 hover:text-slate-950 text-xs font-medium transition" title="Открыть отчёт">
+                Открыть
+              </button>
+              <button onclick="deleteSessionItem('${escapeHtml(item.id)}')" class="p-1.5 rounded-lg bg-slate-950 hover:bg-rose-950 text-slate-400 hover:text-rose-400 border border-slate-800 transition" title="Удалить">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function openSessionItem(id) {
+      const item = state.sessionHistory.find(x => x.id === id);
+      if (!item) return;
+      document.getElementById('in-home').value = item.home;
+      document.getElementById('in-away').value = item.away;
+      syncQuickFromTeams();
+      document.getElementById('report-header-title').textContent = item.match;
+      renderStructuredAnalysis(item.fullData, item.sources || []);
+      state.currentReportText = buildPlainTextReport(item.home, item.away, item.league, item.statusLabel, item.fullData);
+      document.getElementById('btn-copy-report').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteSessionItem(id) {
+      state.sessionHistory = state.sessionHistory.filter(x => x.id !== id);
+      saveSessionHistory();
+      renderSessionTable();
+      showToast('Матч удалён из сводной таблицы.', 'info');
+    }
+
+    function clearSessionHistory() {
+      state.sessionHistory = [];
+      saveSessionHistory();
+      renderSessionTable();
+      showToast('Сводная таблица сессии очищена.', 'warning');
+    }
+
+    function copySessionTable() {
+      if (state.sessionHistory.length === 0) {
+        showToast('Сводная таблица пуста.', 'warning');
+        return;
+      }
+      let md = '| Матч | Лига / Статус | Макс. вероятный исход | Ставка с мин. риском | Прогноз счёта |\n| :--- | :--- | :--- | :--- | :---: |\n';
+      state.sessionHistory.forEach(i => {
+        md += `| ${i.match} | ${i.league} (${i.statusLabel}) | ${i.mostProbableOutcome} (${i.mostProbablePct}) | ${i.lowRiskPick} | ${i.predictedScore} |\n`;
+      });
+      copyTextToClipboard(md, 'Сводная таблица сессии скопирована в буфер обмена.');
+    }
+
+    // Fallback safe Markdown renderer
+    function renderSafeMarkdown(md) {
+      const lines = md.split('\n');
+      let html = '', inTable = false, inList = false;
+      const fmt = t => highlightNoData(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>');
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.startsWith('|') && line.endsWith('|')) {
+          if (inList) { html += '</ul>'; inList = false; }
+          const cells = line.slice(1, -1).split('|').map(c => c.trim());
+          const next = (lines[i + 1] || '').trim();
+          const isHead = next.startsWith('|') && /^\|[\s|:-]+\|$/.test(next);
+          if (!inTable) {
+            html += '<div class="overflow-x-auto"><table>';
+            inTable = true;
+            if (isHead) {
+              html += '<thead><tr>' + cells.map(c => `<th>${fmt(c)}</th>`).join('') + '</tr></thead><tbody>';
+              i++; continue;
+            }
+            html += '<tbody>';
+          }
+          if (/^[\s|:-]+$/.test(line)) continue;
+          html += '<tr>' + cells.map(c => `<td>${fmt(c)}</td>`).join('') + '</tr>';
+          continue;
+        } else if (inTable) { html += '</tbody></table></div>'; inTable = false; }
+
+        if (!line) { if (inList) { html += '</ul>'; inList = false; } continue; }
+        if (line.startsWith('### ')) { html += `<h3>${fmt(line.slice(4))}</h3>`; }
+        else if (line.startsWith('## ')) { html += `<h2>${fmt(line.slice(3))}</h2>`; }
+        else if (line.startsWith('# ')) { html += `<h1>${fmt(line.slice(2))}</h1>`; }
+        else if (/^[-*•]\s+/.test(line)) {
+          if (!inList) { html += '<ul>'; inList = true; }
+          html += `<li>${fmt(line.replace(/^[-*•]\s+/, ''))}</li>`;
+        } else {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += `<p>${fmt(line)}</p>`;
+        }
+      }
+      if (inTable) html += '</tbody></table></div>';
+      if (inList) html += '</ul>';
+      return html;
+    }
+
+    // =========================================================================
+    // TAB 2: THE ODDS API — LIVE LINE & VALUE SCANNER
+    // =========================================================================
+    async function fetchActiveSports() {
+      const key = state.settings.oddsKey;
+      if (!key) {
+        showToast('Сначала укажите ключ The Odds API во вкладке «Настройки API и Деплой».', 'warning');
+        switchTab('settings');
+        return;
+      }
+      const btn = document.getElementById('btn-load-sports');
+      btn.disabled = true;
+      try {
+        const res = await fetch(`https://api.the-odds-api.com/v4/sports/?apiKey=${encodeURIComponent(key)}`);
+        updateQuotaUI(res.headers.get('x-requests-remaining'), res.headers.get('x-requests-used'));
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const sports = (await res.json()).filter(s => s.active && !s.has_outrights);
+        const sel = document.getElementById('sport-select');
+        const cur = sel.value;
+        sel.innerHTML = sports.map(s => `<option value="${escapeHtml(s.key)}" ${s.key === cur ? 'selected' : ''}>[${escapeHtml(s.group)}] ${escapeHtml(s.title)}</option>`).join('');
+        showToast(`Загружено ${sports.length} активных лиг.`, 'success');
+      } catch (err) {
+        showToast(`Ошибка загрузки лиг: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function fetchOddsLine() {
+      const key = state.settings.oddsKey;
+      const sport = document.getElementById('sport-select').value;
+      const box = document.getElementById('scanner-status-box');
+      const wrap = document.getElementById('scanner-table-wrapper');
+      const icon = document.getElementById('icon-fetch-odds');
+      const btn = document.getElementById('btn-fetch-odds');
+
+      if (!key) {
+        showToast('Добавьте ваш ключ The Odds API в настройках.', 'warning');
+        switchTab('settings');
+        return;
+      }
+
+      btn.disabled = true;
+      icon.classList.add('animate-spin');
+
+      try {
+        const url = `https://api.the-odds-api.com/v4/sports/${encodeURIComponent(sport)}/odds/?apiKey=${encodeURIComponent(key)}&regions=eu,us&markets=h2h,totals&oddsFormat=decimal`;
+        const res = await fetch(url);
+        updateQuotaUI(res.headers.get('x-requests-remaining'), res.headers.get('x-requests-used'));
+
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          throw new Error(e.message || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          state.scannerMatches = [];
+          wrap.classList.add('hidden');
+          box.classList.remove('hidden');
+          box.innerHTML = `<div class="text-amber-400 font-bold mb-1">Нет подтверждённых онлайн-данных</div><p class="text-xs text-slate-400">В линии The Odds API сейчас нет активных матчей для «${escapeHtml(sport)}».</p>`;
+          return;
+        }
+
+        state.scannerMatches = data.map(processOddsEvent);
+        box.classList.add('hidden');
+        wrap.classList.remove('hidden');
+        renderScannerTable();
+        showToast(`Загружено ${state.scannerMatches.length} матчей.`, 'success');
+      } catch (err) {
+        wrap.classList.add('hidden');
+        box.classList.remove('hidden');
+        box.innerHTML = `<div class="text-rose-400 font-bold mb-1">Нет подтверждённых онлайн-данных</div><p class="text-xs font-mono text-slate-400">${escapeHtml(err.message)}</p>`;
+      } finally {
+        btn.disabled = false;
+        icon.classList.remove('animate-spin');
+      }
+    }
+
+    function processOddsEvent(ev) {
+      const home = ev.home_team, away = ev.away_team, bms = ev.bookmakers || [];
+      let bestHome = { price: 0, book: '' }, bestDraw = { price: 0, book: '' }, bestAway = { price: 0, book: '' };
+      let hArr = [], dArr = [], aArr = [], pin = null, totalsMap = {};
+
+      bms.forEach(bm => {
+        const h2h = (bm.markets || []).find(m => m.key === 'h2h');
+        if (h2h?.outcomes) {
+          const oH = h2h.outcomes.find(o => o.name === home);
+          const oA = h2h.outcomes.find(o => o.name === away);
+          const oD = h2h.outcomes.find(o => o.name === 'Draw');
+          if (oH?.price > 1) { hArr.push(oH.price); if (oH.price > bestHome.price) bestHome = { price: oH.price, book: bm.title }; }
+          if (oA?.price > 1) { aArr.push(oA.price); if (oA.price > bestAway.price) bestAway = { price: oA.price, book: bm.title }; }
+          if (oD?.price > 1) { dArr.push(oD.price); if (oD.price > bestDraw.price) bestDraw = { price: oD.price, book: bm.title }; }
+          if (bm.key === 'pinnacle' && oH && oA) pin = { home: oH.price, draw: oD ? oD.price : null, away: oA.price };
+        }
+        const tot = (bm.markets || []).find(m => m.key === 'totals');
+        if (tot?.outcomes) {
+          tot.outcomes.forEach(o => {
+            if (o.point === undefined || !o.price) return;
+            const k = String(o.point);
+            if (!totalsMap[k]) totalsMap[k] = { count: 0, point: o.point, over: { price: 0, book: '' }, under: { price: 0, book: '' } };
+            totalsMap[k].count++;
+            if (o.name === 'Over' && o.price > totalsMap[k].over.price) totalsMap[k].over = { price: o.price, book: bm.title };
+            if (o.name === 'Under' && o.price > totalsMap[k].under.price) totalsMap[k].under = { price: o.price, book: bm.title };
+          });
+        }
+      });
+
+      const bestTotal = Object.values(totalsMap).sort((a, b) => b.count - a.count)[0] || null;
+      const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+      const rH = pin ? pin.home : avg(hArr), rA = pin ? pin.away : avg(aArr), rD = pin ? pin.draw : (dArr.length ? avg(dArr) : null);
+      const refSource = pin ? 'Pinnacle' : 'Avg';
+
+      let marginPct = null, fairH = null, fairD = null, fairA = null, maxEv = null, bestPick = null;
+      if (rH > 1 && rA > 1) {
+        const iH = 1 / rH, iA = 1 / rA, iD = (rD && rD > 1) ? 1 / rD : 0;
+        const sum = iH + iA + iD;
+        marginPct = (sum - 1) * 100;
+        fairH = iH / sum; fairA = iA / sum; fairD = iD > 0 ? iD / sum : null;
+        const cands = [];
+        if (bestHome.price > 1) cands.push({ label: 'П1', odd: bestHome.price, book: bestHome.book, ev: (bestHome.price * fairH - 1) * 100 });
+        if (bestDraw.price > 1 && fairD) cands.push({ label: 'Х', odd: bestDraw.price, book: bestDraw.book, ev: (bestDraw.price * fairD - 1) * 100 });
+        if (bestAway.price > 1) cands.push({ label: 'П2', odd: bestAway.price, book: bestAway.book, ev: (bestAway.price * fairA - 1) * 100 });
+        cands.sort((a, b) => b.ev - a.ev);
+        if (cands[0]) { maxEv = cands[0].ev; bestPick = cands[0]; }
+      }
+
+      const dt = new Date(ev.commence_time);
+      return {
+        id: ev.id, sportKey: ev.sport_key, sportTitle: ev.sport_title,
+        dt, isLive: dt.getTime() <= Date.now(),
+        home, away, bestHome, bestDraw, bestAway, bestTotal,
+        refSource, marginPct, fairH, fairD, fairA, maxEv, bestPick, books: bms.length
+      };
+    }
+
+    function renderScannerTable() {
+      const tbody = document.getElementById('scanner-tbody');
+      const q = document.getElementById('scanner-search').value.trim().toLowerCase();
+      const valOnly = document.getElementById('filter-value-only').checked;
+
+      const list = state.scannerMatches.filter(m => (!q || m.home.toLowerCase().includes(q) || m.away.toLowerCase().includes(q)) && (!valOnly || (m.maxEv !== null && m.maxEv > 0)));
+      document.getElementById('stat-matches-count').textContent = state.scannerMatches.length;
+      document.getElementById('stat-value-count').textContent = state.scannerMatches.filter(m => m.maxEv !== null && m.maxEv > 0).length;
+
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="py-8 text-center text-slate-400">Нет матчей по фильтру.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(m => {
+        const time = m.dt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        const date = m.dt.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+        const evCls = m.maxEv > 0 ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-slate-800 text-slate-400 border-slate-700';
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="py-3 px-4 font-mono text-xs whitespace-nowrap">
+              <div class="text-white font-semibold">${time}</div>
+              <div class="text-slate-500 text-[10px]">${date}</div>
+              ${m.isLive ? '<span class="inline-block mt-0.5 px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 text-[9px] font-bold">LIVE</span>' : ''}
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-semibold text-white">${escapeHtml(m.home)}</div>
+              <div class="text-slate-300 text-xs">${escapeHtml(m.away)}</div>
+              <div class="text-[10px] text-slate-500 font-mono">${m.books} БК</div>
+            </td>
+            <td class="py-3 px-3 text-center font-mono text-xs">
+              ${m.bestHome.price ? `<div class="font-bold text-white">${m.bestHome.price.toFixed(2)}</div><div class="text-[10px] text-slate-500 truncate max-w-[80px] mx-auto">${escapeHtml(m.bestHome.book)}</div>` : '—'}
+            </td>
+            <td class="py-3 px-3 text-center font-mono text-xs">
+              ${m.bestDraw.price ? `<div class="font-bold text-slate-200">${m.bestDraw.price.toFixed(2)}</div><div class="text-[10px] text-slate-500 truncate max-w-[80px] mx-auto">${escapeHtml(m.bestDraw.book)}</div>` : '—'}
+            </td>
+            <td class="py-3 px-3 text-center font-mono text-xs">
+              ${m.bestAway.price ? `<div class="font-bold text-white">${m.bestAway.price.toFixed(2)}</div><div class="text-[10px] text-slate-500 truncate max-w-[80px] mx-auto">${escapeHtml(m.bestAway.book)}</div>` : '—'}
+            </td>
+            <td class="py-3 px-3 text-center font-mono text-xs">
+              ${m.bestTotal ? `<div class="text-[10px] text-slate-400">Т(${m.bestTotal.point})</div><span class="text-emerald-400">${m.bestTotal.over.price.toFixed(2)}</span> / <span class="text-cyan-400">${m.bestTotal.under.price.toFixed(2)}</span>` : '—'}
+            </td>
+            <td class="py-3 px-3 text-center font-mono text-[11px]">
+              ${m.marginPct !== null ? `<div class="text-amber-400">${m.marginPct.toFixed(1)}% (${m.refSource})</div><div class="text-slate-300">${(m.fairH * 100).toFixed(0)}%${m.fairD ? `/${(m.fairD * 100).toFixed(0)}%` : ''}/${(m.fairA * 100).toFixed(0)}%</div>` : '—'}
+            </td>
+            <td class="py-3 px-3 text-center">
+              ${m.bestPick ? `<div class="inline-flex flex-col px-2 py-1 rounded-lg border font-mono text-xs ${evCls}"><span class="font-bold">${m.maxEv > 0 ? '+' : ''}${m.maxEv.toFixed(1)}%</span><span class="text-[10px]">${m.bestPick.label} @ ${m.bestPick.odd.toFixed(2)}</span></div>` : '—'}
+            </td>
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              <button onclick="transferScannerMatch('${escapeHtml(m.id)}')" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-400 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 text-xs font-bold transition inline-flex items-center gap-1">
+                <span>В анализ</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function transferScannerMatch(id) {
+      const m = state.scannerMatches.find(x => x.id === id);
+      if (!m) return;
+
+      document.getElementById('in-home').value = m.home;
+      document.getElementById('in-away').value = m.away;
+      syncQuickFromTeams();
+
+      // Match league dropdown
+      const sel = document.getElementById('in-league');
+      if (m.sportKey.includes('nhl')) sel.value = 'NHL';
+      else if (m.sportKey.includes('ahl')) sel.value = 'AHL';
+      else if (m.sportKey.includes('ncaa')) sel.value = 'NCAA';
+      else if (m.sportKey.includes('champs')) sel.value = 'Лига Чемпионов УЕФА';
+      else if (m.sportKey.includes('europa')) sel.value = 'Лига Европы УЕФА';
+      else if (m.sportKey.includes('epl')) sel.value = 'АПЛ';
+      else if (m.sportKey.includes('nba')) sel.value = 'NBA';
+      else {
+        sel.value = 'Другая';
+        document.getElementById('in-league-custom').value = m.sportTitle || m.sportKey;
+      }
+      toggleCustomLeague();
+
+      setMatchStatus(m.isLive ? 'live' : 'prematch');
+      document.getElementById('in-odd-1').value = m.bestHome.price ? m.bestHome.price.toFixed(2) : '';
+      document.getElementById('in-odd-x').value = m.bestDraw.price ? m.bestDraw.price.toFixed(2) : '';
+      document.getElementById('in-odd-2').value = m.bestAway.price ? m.bestAway.price.toFixed(2) : '';
+      document.getElementById('in-odd-total').value = m.bestTotal ? `Т(${m.bestTotal.point}) Б ${m.bestTotal.over.price.toFixed(2)} / М ${m.bestTotal.under.price.toFixed(2)}` : '';
+      document.getElementById('in-odds-tag').textContent = `The Odds API (${m.books} БК)`;
+
+      let noteParts = [];
+      if (m.marginPct !== null) {
+        noteParts.push(`Чистая линия (${m.refSource}, маржа ${m.marginPct.toFixed(1)}%): П1 ${(m.fairH * 100).toFixed(1)}%${m.fairD ? ` / X ${(m.fairD * 100).toFixed(1)}%` : ''} / П2 ${(m.fairA * 100).toFixed(1)}%.`);
+      }
+      if (m.bestPick && m.maxEv > 0) {
+        noteParts.push(`Выявлен рыночный перекос: ${m.bestPick.label} @ ${m.bestPick.odd.toFixed(2)} (${m.bestPick.book}), EV +${m.maxEv.toFixed(2)}%.`);
+      }
+      document.getElementById('in-notes').value = noteParts.join('\n');
+
+      switchTab('analysis');
+      showToast(`Матч ${m.home} — ${m.away} перенесён во вкладку «Анализ матча».`, 'success');
+    }
+
+    // =========================================================================
+    // TAB 3: MARGIN, EV & KELLY CALCULATOR
+    // =========================================================================
+    function setCalcMode(mode) {
+      state.calcMode = mode;
+      const b3 = document.getElementById('calc-mode-3way');
+      const b2 = document.getElementById('calc-mode-2way');
+      const dw = document.getElementById('calc-draw-wrap');
+      if (mode === '3way') {
+        b3.className = 'px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition';
+        b2.className = 'px-3 py-1 rounded-lg text-slate-400 hover:text-white transition';
+        dw.classList.remove('hidden');
+      } else {
+        b2.className = 'px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-bold transition';
+        b3.className = 'px-3 py-1 rounded-lg text-slate-400 hover:text-white transition';
+        dw.classList.add('hidden');
+      }
+      recalcMargin();
+    }
+
+    function recalcMargin() {
+      const o1 = parseFloat(document.getElementById('calc-o1').value);
+      const ox = parseFloat(document.getElementById('calc-ox').value);
+      const o2 = parseFloat(document.getElementById('calc-o2').value);
+      const tbody = document.getElementById('res-novig-tbody');
+
+      const items = state.calcMode === '3way'
+        ? [{ name: 'П1 (Хозяева)', odd: o1 }, { name: 'Х (Ничья)', odd: ox }, { name: 'П2 (Гости)', odd: o2 }]
+        : [{ name: 'П1 / Исход 1', odd: o1 }, { name: 'П2 / Исход 2', odd: o2 }];
+
+      if (items.some(i => isNaN(i.odd) || i.odd <= 1)) {
+        document.getElementById('res-margin').textContent = '—';
+        document.getElementById('res-implied-sum').textContent = '—';
+        tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-slate-500">Введите кэфы &gt; 1.00</td></tr>';
+        return;
+      }
+
+      const sumImp = items.reduce((a, i) => a + 1 / i.odd, 0);
+      document.getElementById('res-margin').textContent = `${((sumImp - 1) * 100).toFixed(2)}%`;
+      document.getElementById('res-implied-sum').textContent = `${(sumImp * 100).toFixed(2)}%`;
+
+      tbody.innerHTML = items.map(i => {
+        const imp = 1 / i.odd;
+        const fairP = imp / sumImp;
+        return `
+          <tr>
+            <td class="py-2.5 px-3 text-slate-200 font-sans font-medium">${i.name}</td>
+            <td class="py-2.5 px-3 text-right text-white">${i.odd.toFixed(2)}</td>
+            <td class="py-2.5 px-3 text-right text-slate-400">${(imp * 100).toFixed(2)}%</td>
+            <td class="py-2.5 px-3 text-right text-emerald-400 font-bold">${(fairP * 100).toFixed(2)}%</td>
+            <td class="py-2.5 px-3 text-right text-cyan-400 font-bold">${(1 / fairP).toFixed(3)}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    function recalcKelly() {
+      const bank = parseFloat(document.getElementById('kelly-bank').value) || 0;
+      const odd = parseFloat(document.getElementById('kelly-odd').value);
+      const probPct = parseFloat(document.getElementById('kelly-prob').value);
+      const box = document.getElementById('kelly-ev-box');
+      const evEl = document.getElementById('res-ev-pct');
+      const beEl = document.getElementById('res-breakeven');
+      const vEl = document.getElementById('res-ev-verdict');
+
+      if (isNaN(odd) || odd <= 1 || isNaN(probPct) || probPct <= 0 || probPct >= 100) {
+        evEl.textContent = '—'; beEl.textContent = '—'; vEl.textContent = 'Некорректный ввод';
+        return;
+      }
+
+      const p = probPct / 100, q = 1 - p, b = odd - 1;
+      const evPct = (p * odd - 1) * 100;
+      const kFull = Math.max(0, (b * p - q) / b);
+
+      evEl.textContent = `${evPct > 0 ? '+' : ''}${evPct.toFixed(2)}%`;
+      beEl.textContent = `${((1 / odd) * 100).toFixed(2)}%`;
+
+      if (evPct > 0) {
+        box.className = 'rounded-xl p-4 border flex items-center justify-between bg-emerald-950/30 border-emerald-500/40';
+        evEl.className = 'text-3xl font-mono font-bold mt-1 text-emerald-400';
+        vEl.className = 'text-xs font-semibold mt-0.5 text-emerald-400';
+        vEl.textContent = 'VALUE (+EV)';
+      } else {
+        box.className = 'rounded-xl p-4 border flex items-center justify-between bg-rose-950/30 border-rose-500/40';
+        evEl.className = 'text-3xl font-mono font-bold mt-1 text-rose-400';
+        vEl.className = 'text-xs font-semibold mt-0.5 text-rose-400';
+        vEl.textContent = 'ПРОПУСК (-EV)';
+      }
+
+      const setK = (pId, aId, f) => {
+        document.getElementById(pId).textContent = `${(f * 100).toFixed(2)}%`;
+        document.getElementById(aId).textContent = `${(bank * f).toFixed(0)} ед.`;
+      };
+      setK('res-kelly-full-pct', 'res-kelly-full-amt', kFull);
+      setK('res-kelly-half-pct', 'res-kelly-half-amt', kFull * 0.5);
+      setK('res-kelly-quarter-pct', 'res-kelly-quarter-amt', kFull * 0.25);
+    }
+
+    // =========================================================================
+    // TAB 4: AGGREGATORS & EXPERTS
+    // =========================================================================
+    function syncAggregatorsContext() {
+      const h = document.getElementById('in-home').value.trim();
+      const a = document.getElementById('in-away').value.trim();
+      document.getElementById('agg-context-label').textContent = (h && a) ? `${h} vs ${a}` : (h || a || 'Не выбран');
+    }
+
+    function renderAggregators() {
+      syncAggregatorsContext();
+      const h = document.getElementById('in-home').value.trim();
+      const a = document.getElementById('in-away').value.trim();
+      const mq = (h && a) ? `${h} ${a}` : (h || a || '');
+      const enc = encodeURIComponent(mq);
+
+      const cats = [
+        {
+          title: 'Вратари и составы (NHL)', icon: 'shield', color: 'text-cyan-400',
+          links: [
+            { name: 'DailyFaceoff — Starting Goalies', desc: 'Подтверждённые стартовые вратари НХЛ', url: 'https://www.dailyfaceoff.com/starting-goalies' },
+            { name: 'DailyFaceoff — Line Combinations', desc: 'Звенья и спецбригады большинства', url: 'https://www.dailyfaceoff.com/teams' },
+            { name: 'LeftWingLock', desc: 'Альтернативный трекер голкиперов', url: 'https://leftwinglock.com/starting-goalies/' }
+          ]
+        },
+        {
+          title: 'Продвинутая статистика и xG', icon: 'bar-chart-3', color: 'text-emerald-400',
+          links: [
+            { name: 'MoneyPuck (NHL xG)', desc: 'Ожидаемые голы и лайв-модели вероятностей', url: 'https://moneypuck.com/' },
+            { name: 'Natural Stat Trick', desc: 'Corsi, HDCF, xGF/xGA за последние игры', url: 'https://www.naturalstattrick.com/' },
+            { name: 'Understat (Футбол xG)', desc: 'xG и xPTS топ-лиг Европы', url: 'https://understat.com/' },
+            { name: 'FBref (Футбол)', desc: 'Отчёты ЛЧ, ЛЕ и национальных лиг', url: mq ? `https://fbref.com/en/search/search.fcgi?search=${enc}` : 'https://fbref.com/' }
+          ]
+        },
+        {
+          title: 'Травмы и новости', icon: 'heart-pulse', color: 'text-rose-400',
+          links: [
+            { name: 'Rotowire — Injuries', desc: 'Свежие отчёты по травмам (IR / DTD)', url: 'https://www.rotowire.com/hockey/injury-report.php' },
+            { name: 'Google News (24 часа)', desc: mq ? `Поиск травм и составов: ${mq}` : 'Последние инсайды за сутки', url: `https://www.google.com/search?q=${encodeURIComponent((mq || 'NHL') + ' injuries starting goalie lineup')}&tbs=qdr:d` }
+          ]
+        },
+        {
+          title: 'Эксперты и Консенсус', icon: 'users', color: 'text-amber-400',
+          links: [
+            { name: 'Covers — Consensus', desc: 'Проценты ставок публики и разборы экспертов', url: mq ? `https://www.google.com/search?q=site:covers.com+${enc}` : 'https://www.covers.com/sports/nhl/matchups' },
+            { name: 'Action Network', desc: 'Sharp Money, движение линий и превью', url: mq ? `https://www.google.com/search?q=site:actionnetwork.com+${enc}` : 'https://www.actionnetwork.com/nhl' }
+          ]
+        },
+        {
+          title: 'Live-агрегаторы (NHL / AHL / NCAA / Футбол)', icon: 'radio', color: 'text-purple-400',
+          links: [
+            { name: 'Flashscore', desc: 'Лайв-счёт, удары, угловые, составы', url: 'https://www.flashscore.com/' },
+            { name: 'Sofascore', desc: 'График давления и xG в реальном времени', url: 'https://www.sofascore.com/' },
+            { name: 'TheAHL.com', desc: 'Официальный матч-центр АХЛ', url: 'https://theahl.com/stats/schedule' },
+            { name: 'USCHO (NCAA)', desc: 'Результаты и рейтинги студенческого хоккея', url: 'https://www.uscho.com/scoreboard/' }
+          ]
+        }
+      ];
+
+      document.getElementById('aggregators-grid').innerHTML = cats.map(c => `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-col gap-3">
+          <div class="flex items-center gap-2 pb-2.5 border-b border-slate-800">
+            <i data-lucide="${c.icon}" class="w-4 h-4 ${c.color}"></i>
+            <h3 class="text-sm font-bold text-white">${c.title}</h3>
+          </div>
+          <div class="space-y-2 flex-1">
+            ${c.links.map(l => `
+              <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="block p-3 rounded-xl bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-slate-700 transition group">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-semibold text-slate-200 group-hover:text-emerald-400 transition">${escapeHtml(l.name)}</span>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0"></i>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1">${escapeHtml(l.desc)}</p>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // TAB 5: API-SPORTS & NHL OFFICIAL API HELPERS
+    // =========================================================================
+    async function testApiSportsConnection() {
+      const key = document.getElementById('set-apisports-key').value.trim();
+      const host = document.getElementById('set-apisports-host').value;
+      const box = document.getElementById('apisports-test-result');
+      if (!key) { showToast('Введите ключ API-Sports.', 'warning'); return; }
+      box.classList.remove('hidden');
+      box.textContent = 'Проверка подключения...';
+      try {
+        const headers = host.includes('rapidapi')
+          ? { 'x-rapidapi-key': key, 'x-rapidapi-host': host }
+          : { 'x-apisports-key': key };
+        const res = await fetch(`https://${host}/status`, { headers });
+        const data = await res.json();
+        if (!res.ok || (data.errors && Object.keys(data.errors).length > 0)) {
+          throw new Error(JSON.stringify(data.errors || data.message || res.status));
+        }
+        const reqs = data.response?.requests ? `${data.response.requests.current}/${data.response.requests.limit_day}` : 'OK';
+        box.innerHTML = `<span class="text-emerald-400">Подключено!</span> Лимит сегодня: ${escapeHtml(reqs)}`;
+        saveSettings();
+      } catch (err) {
+        box.innerHTML = `<span class="text-rose-400">Ошибка:</span> ${escapeHtml(err.message)}`;
+      }
+    }
+
+    async function fetchNhlViaProxy() {
+      const proxy = document.getElementById('set-nhl-proxy').value.trim();
+      if (!proxy) { showToast('Укажите URL CORS-прокси.', 'warning'); return; }
+      saveSettings();
+      try {
+        showToast('Загрузка NHL Official API...', 'info');
+        const res = await fetch(proxy + encodeURIComponent('https://api-web.nhle.com/v1/score/now'));
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        document.getElementById('nhl-raw-json').value = JSON.stringify(data, null, 2);
+        renderNhlParsedGames(data);
+        showToast('Данные NHL API загружены.', 'success');
+      } catch (err) {
+        showToast(`Ошибка прокси (${err.message}). Вставьте JSON вручную.`, 'error');
+      }
+    }
+
+    function parseNhlRawJson() {
+      const raw = document.getElementById('nhl-raw-json').value.trim();
+      if (!raw) { showToast('Вставьте JSON от NHL API.', 'warning'); return; }
+      try {
+        renderNhlParsedGames(JSON.parse(raw));
+      } catch (e) {
+        showToast('Некорректный JSON: ' + e.message, 'error');
+      }
+    }
+
+    function renderNhlParsedGames(data) {
+      const list = document.getElementById('nhl-parsed-list');
+      const games = data.games || [];
+      list.classList.remove('hidden');
+      if (!games.length) {
+        list.innerHTML = '<div class="text-xs text-amber-400 p-2 bg-slate-950 rounded-lg border border-slate-800">Нет подтверждённых онлайн-данных (массив games пуст).</div>';
+        return;
+      }
+      list.innerHTML = games.map(g => {
+        const home = g.homeTeam?.name?.default || g.homeTeam?.abbrev || 'Home';
+        const away = g.awayTeam?.name?.default || g.awayTeam?.abbrev || 'Away';
+        const hS = g.homeTeam?.score ?? 0, aS = g.awayTeam?.score ?? 0;
+        const hSog = g.homeTeam?.sog ?? '—', aSog = g.awayTeam?.sog ?? '—';
+        const st = g.gameState || '—', per = g.period ? `P${g.period}` : '', clk = g.clock?.timeRemaining || '';
+        const payload = JSON.stringify({ home, away, hS, aS, hSog, aSog, st, per, clk }).replace(/'/g, '&apos;');
+        return `
+          <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2 text-xs font-mono">
+            <div>
+              <div class="text-white font-semibold">${escapeHtml(home)} ${hS}:${aS} ${escapeHtml(away)}</div>
+              <div class="text-slate-400 text-[10px]">${escapeHtml(st)} ${escapeHtml(per)} ${escapeHtml(clk)} | SOG: ${hSog}:${aSog}</div>
+            </div>
+            <button onclick='importNhlToAnalysis(${payload})' class="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-400 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 font-sans font-semibold transition">
+              В анализ
+            </button>
+          </div>`;
+      }).join('');
+    }
+
+    function importNhlToAnalysis(g) {
+      document.getElementById('in-home').value = g.home;
+      document.getElementById('in-away').value = g.away;
+      syncQuickFromTeams();
+      document.getElementById('in-league').value = 'NHL';
+      toggleCustomLeague();
+      setMatchStatus('live');
+      document.getElementById('in-live-score').value = `${g.hS} : ${g.aS}`;
+      document.getElementById('in-live-clock').value = `${g.st} ${g.per} ${g.clk}`.trim();
+      document.getElementById('in-live-sog').value = `${g.hSog} : ${g.aSog}`;
+      switchTab('analysis');
+      showToast(`Live-данные NHL (${g.home} — ${g.away}) перенесены в анализ.`, 'success');
+    }
+  </script>
+</body>
+</html>
